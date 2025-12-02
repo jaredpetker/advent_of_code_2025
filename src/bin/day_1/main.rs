@@ -22,12 +22,15 @@ impl FromStr for RotInstr {
     type Err = String;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        let chars = s.chars().collect::<Vec<_>>();
-        let digits_len = chars.len();
-        let rot = s[1..digits_len]
-            .parse::<i32>()
-            .expect(format!("Expected an i32 but received: {}", s[1..digits_len].to_string()).as_str());
-        match chars[0] {
+        let (dir, rot) = (
+            s.chars()
+                .next()
+                .expect("Expected character but received nothing"),
+            s[1..]
+                .parse::<i32>()
+                .expect(format!("Expected an i32 but received: {}", s[1..].to_string()).as_str()),
+        );
+        match dir {
             'L' => Ok(RotInstr::Left(rot)),
             'R' => Ok(RotInstr::Right(rot)),
             _ => Err(format!("Unknown rotation instruction: {}", s)),
@@ -41,9 +44,9 @@ fn main() {
 
     let instructions = input
         .lines()
-        .map(|l| {
-            RotInstr::from_str(l)
-                .expect(format!("Expected a Rotation Instruction but received: {}", l).as_str())
+        .map(|line| {
+            RotInstr::from_str(line)
+                .expect(format!("Expected a Rotation Instruction but received: {}", line).as_str())
         })
         .collect::<Vec<_>>();
 
@@ -58,9 +61,9 @@ fn main() {
 
     for rot_instr in instructions {
         let instr: i32 = rot_instr.into();
-        let unbounded_dial_pos= dial_pos + instr;
+        let unbounded_dial_pos = dial_pos + instr;
         let pre_rot_dial_pos = dial_pos;
-        dial_pos = unbounded_dial_pos.rem_euclid(100).abs();;
+        dial_pos = unbounded_dial_pos.rem_euclid(100).abs();
 
         // A bit of a silly way to go vs conditionals, but amusing
         num_zeroes_clicked_total += unbounded_dial_pos.abs() / 100
@@ -68,6 +71,7 @@ fn main() {
             // and we weren't already at zero
             // then account for passing zero
             + ((1 - (pre_rot_dial_pos == 0) as i32) * (unbounded_dial_pos <= 0) as i32);
+        
         num_zeroes_at_rest += (dial_pos == 0) as i32;
     }
 
