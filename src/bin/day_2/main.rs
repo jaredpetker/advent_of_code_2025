@@ -52,10 +52,11 @@ fn main() {
     for range in ranges {
         for product_id in range {
             let product_id_str = product_id.to_string();
-            if product_id_str.repeats_n(2, 2) {
+            let repeats_twice = product_id_str.repeats_n(2, 2);
+            if repeats_twice {
                 part_1_sum += product_id;
             }
-            if product_id_str.repeats_n(2, product_id_str.len()) {
+            if repeats_twice || product_id_str.repeats_n(3, product_id_str.len()) {
                 part_2_sum += product_id;
             }
         }
