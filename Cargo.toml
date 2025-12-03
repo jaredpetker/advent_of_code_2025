@@ -7,3 +7,11 @@ edition = "2024"
 
 [[bin]]
 name = "day_1"
+
+
+[[bin]]
+name = "day_2"
+
+
+[[bin]]
+name = "day_3"
