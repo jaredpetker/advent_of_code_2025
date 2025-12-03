@@ -20,7 +20,7 @@ impl FromStr for Bank {
 }
 
 impl Bank {
-    fn compute_joltage(&self, max_digits: usize) -> u128 {
+    fn compute_joltage(&self, max_digits: usize) -> usize {
         let mut joltage = vec![0; max_digits];
         let bank_len = self.0.len();
 
@@ -30,7 +30,7 @@ impl Bank {
                 .saturating_sub(bank_len.saturating_sub(battery_idx))
                 .clamp(0, max_digits);
 
-            // if joltage at joltage index is less than the current rating
+            // if rating at joltage index is less than the current rating
             // then update the joltage at the index to the current rating
             // and zero out the rest of the joltage
             for joltage_idx in min_joltage_alteration_idx..joltage.len() {
@@ -48,7 +48,7 @@ impl Bank {
             .iter()
             .map(ToString::to_string)
             .collect::<String>()
-            .parse::<u128>()
+            .parse::<usize>()
             .unwrap()
     }
 }
@@ -64,6 +64,6 @@ fn main() {
         .map(|bank| (bank.compute_joltage(2), bank.compute_joltage(12)))
         .collect::<Vec<_>>();
 
-    println!("Part 1: {:?}", joltage_pairs.iter().map(|(max_digits_2, _)| max_digits_2).sum::<u128>());
-    println!("Part 2: {:?}", joltage_pairs.iter().map(|(_, max_digits_12)| max_digits_12).sum::<u128>());
+    println!("Part 1: {}", joltage_pairs.iter().map(|(max_digits_2, _)| max_digits_2).sum::<usize>());
+    println!("Part 2: {}", joltage_pairs.iter().map(|(_, max_digits_12)| max_digits_12).sum::<usize>());
 }
