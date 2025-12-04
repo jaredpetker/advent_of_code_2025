@@ -1,23 +1,22 @@
-use std::collections::HashMap;
 use advent_of_code_2025::{include_file, Vec2i};
+use std::collections::HashSet;
 
-#[derive(Eq, PartialOrd, PartialEq, Debug, Copy, Clone)]
-enum Spot {
-    Roll,
-    Free,
-}
+#[derive(Eq, PartialEq, Debug, Copy, Clone, Hash)]
+struct Roll(Vec2i);
 
 fn main() {
     let input = include_file!("sample");
-    let mut map = HashMap::<Vec2i, Spot>::new();
+    let mut rolls = HashSet::<Roll>::new();
     for (y, line) in input.lines().enumerate() {
         for (x, spot) in line.chars().enumerate() {
-            map.insert(Vec2i::new(x as i64, y as i64), if spot == '@' { Spot::Roll } else { Spot::Free });
+            if spot == '@' {
+                rolls.insert(Roll(Vec2i::new(x as i64, y as i64)));
+            }
         }
     }
 
-    let mut all_forkliftable_spots = Vec::new();
-    let mut curr_spots_len = all_forkliftable_spots.len();
+    let mut all_forkliftable_rolls = Vec::new();
+    let mut curr_rolls_len = all_forkliftable_rolls.len();
     let mut surrounding_spots = Vec::new();
     for y in -1..=1 {
         for x in -1..=1 {
@@ -28,37 +27,34 @@ fn main() {
         }
     }
 
-    let mut part_1_spot_count = 0;
+    let mut part_1_roll_count = 0;
     loop {
-        let mut forkliftable_spots = Vec::<(Vec2i, Spot)>::new();
-        for (pos, spot) in map.iter() {
-            if spot != &Spot::Roll {
-                continue
-            }
+        let mut forkliftable_rolls = Vec::<Roll>::new();
+        for Roll(pos) in rolls.iter() {
             let mut surrounding_roll_count = 0;
             for &Vec2i {x, y} in surrounding_spots.iter() {
                 let check_pos = *pos + Vec2i::new(x, y);
-                if let Some(Spot::Roll) = map.get(&check_pos) {
+                if let Some(_) = rolls.get(&Roll(check_pos)) {
                     surrounding_roll_count += 1;
                 }
             }
             if surrounding_roll_count < 4 {
-                forkliftable_spots.push((*pos, *spot));
+                forkliftable_rolls.push(Roll(*pos));
             }
         }
-        for (pos, spot) in forkliftable_spots {
-            map.remove(&pos);
-            all_forkliftable_spots.push(spot);
+        for roll in forkliftable_rolls {
+            rolls.remove(&roll);
+            all_forkliftable_rolls.push(roll);
         }
-        if part_1_spot_count == 0 {
-           part_1_spot_count = all_forkliftable_spots.len();
+        if part_1_roll_count == 0 {
+           part_1_roll_count = all_forkliftable_rolls.len();
         }
-        if all_forkliftable_spots.len() == curr_spots_len {
+        if all_forkliftable_rolls.len() == curr_rolls_len {
             break;
         }
-        curr_spots_len = all_forkliftable_spots.len();
+        curr_rolls_len = all_forkliftable_rolls.len();
     }
 
-    println!("Part 1: {}", part_1_spot_count);
-    println!("Part 2: {}", all_forkliftable_spots.len());
+    println!("Part 1: {}", part_1_roll_count);
+    println!("Part 2: {}", all_forkliftable_rolls.len());
 }
