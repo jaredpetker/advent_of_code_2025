@@ -66,15 +66,19 @@ fn main() {
                     .collect::<Vec<usize>>();
 
                 // create right-to-left read digits
-                let mut digits = vec![Vec::<char>::new(); max_digits];
+                // place non-whitespace characters into their correct
+                // place within each set of digits in lines_of_digits
+                let mut lines_of_digits = vec![Vec::<char>::new(); max_digits];
                 for item in items.iter() {
                     for (i, c) in item.chars().enumerate() {
                         if !c.is_whitespace() {
-                            digits[i].push(c);
+                            lines_of_digits[i].push(c);
                         }
                     }
                 }
-                let numbers_rtl = digits
+                
+                // convert the lines of digit (characters) into numbers
+                let numbers_rtl = lines_of_digits
                     .iter()
                     .map(|v| v.iter().collect::<String>())
                     .map(|s| s.parse::<usize>().expect("Expected numerical item"))
