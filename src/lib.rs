@@ -1,11 +1,34 @@
 #[macro_export]
 macro_rules! include_file {
-    ( $file:literal ) => {
-        {
-            println!("Loading file: {}", $file);
-            include_str!($file)
+    ( $file:literal ) => {{
+        println!("Loading file: {}", $file);
+        include_str!($file)
+    }};
+}
+
+#[derive(PartialEq, Copy, Clone, Debug, PartialOrd)]
+pub struct Vec2f {
+    pub x: f64,
+    pub y: f64,
+}
+
+impl From<Vec2i> for Vec2f {
+    fn from(value: Vec2i) -> Self {
+        Vec2f {
+            x: value.x as f64,
+            y: value.y as f64,
         }
-    };
+    }
+}
+
+impl Vec2f {
+    pub fn cross(&self, other: &Vec2f) -> f64 {
+        self.x * other.y - self.y * other.x
+    }
+
+    pub fn dot(&self, other: &Vec2f) -> f64 {
+        self.x * other.x + self.y * other.y
+    }
 }
 
 #[derive(Hash, Eq, PartialEq, Copy, Clone, Debug, Ord, PartialOrd)]
@@ -15,7 +38,6 @@ pub struct Vec2i {
 }
 
 impl Vec2i {
-
     pub fn new(x: i64, y: i64) -> Self {
         Vec2i { x, y }
     }
@@ -37,28 +59,51 @@ impl Vec2i {
     }
 
     pub fn rotate_left(&self) -> Self {
-        Vec2i { x: self.y, y: -self.x }
+        Vec2i {
+            x: self.y,
+            y: -self.x,
+        }
     }
 
     pub fn rotate_right(&self) -> Self {
-        Vec2i { x: -self.y, y: self.x }
+        Vec2i {
+            x: -self.y,
+            y: self.x,
+        }
     }
 
     pub fn add(&self, other: &Vec2i) -> Vec2i {
-        Vec2i { x: self.x + other.x, y: self.y + other.y }
+        Vec2i {
+            x: self.x + other.x,
+            y: self.y + other.y,
+        }
     }
 
     pub fn prod_vec(&self, other: &Vec2i) -> Vec2i {
-        Vec2i { x: self.x * other.x, y: self.y * other.y }
+        Vec2i {
+            x: self.x * other.x,
+            y: self.y * other.y,
+        }
     }
+}
 
+impl From<(&str, &str)> for Vec2i {
+    fn from((x, y): (&str, &str)) -> Self {
+        Self {
+            x: x.parse::<i64>().expect("expected a number"),
+            y: y.parse::<i64>().expect("expected a number"),
+        }
+    }
 }
 
 impl std::ops::Add<Vec2i> for Vec2i {
     type Output = Vec2i;
 
     fn add(self, other: Vec2i) -> Vec2i {
-        Vec2i { x: self.x + other.x, y: self.y + other.y }
+        Vec2i {
+            x: self.x + other.x,
+            y: self.y + other.y,
+        }
     }
 }
 
@@ -73,7 +118,10 @@ impl std::ops::Sub<Vec2i> for Vec2i {
     type Output = Vec2i;
 
     fn sub(self, other: Vec2i) -> Vec2i {
-        Vec2i { x: self.x - other.x, y: self.y - other.y }
+        Vec2i {
+            x: self.x - other.x,
+            y: self.y - other.y,
+        }
     }
 }
 
@@ -88,7 +136,10 @@ impl std::ops::Mul<i64> for Vec2i {
     type Output = Vec2i;
 
     fn mul(self, rhs: i64) -> Vec2i {
-        Vec2i { x: self.x * rhs, y: self.y * rhs }
+        Vec2i {
+            x: self.x * rhs,
+            y: self.y * rhs,
+        }
     }
 }
 
@@ -103,7 +154,10 @@ impl std::ops::Div<i64> for Vec2i {
     type Output = Vec2i;
 
     fn div(self, rhs: i64) -> Vec2i {
-        Vec2i { x: self.x / rhs, y: self.y / rhs }
+        Vec2i {
+            x: self.x / rhs,
+            y: self.y / rhs,
+        }
     }
 }
 
@@ -118,7 +172,10 @@ impl std::ops::Neg for Vec2i {
     type Output = Vec2i;
 
     fn neg(self) -> Vec2i {
-        Vec2i { x: -self.x, y: -self.y }
+        Vec2i {
+            x: -self.x,
+            y: -self.y,
+        }
     }
 }
 
